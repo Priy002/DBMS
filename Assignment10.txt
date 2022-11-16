@@ -1,0 +1,88 @@
+Create
+db.collection.insertOne()
+ex-
+db.users.insertOne({name: 'priyanka', age: 20})
+db.collection.insertMany()
+
+
+Read
+db.collection.find()
+ex-
+db.users.find( 
+   {age: {$gt: 18}},
+   {name: 'priyanka', address:'xyz'}
+).limit(5)
+
+Update
+db.collection.updateOne()
+
+db.collection.updateMany()
+ex-
+db.users.updateMany(
+   {age: {$lt: 18}},
+   {$set: {status: 'reject'}}
+)
+
+db.collection.replaceOne()
+
+Delete
+db.collection.deleteOne()
+
+db.collection.deleteMany()
+
+
+========================================================================================================================================================================
+
+
+//implementation of CRUD
+
+
+
+db.createCollection("employee")
+db.employee.insert({_id:001,name:"Shreyas Patil",email:"shreyas@gmail.com",mobile:1234567890,address:"Pune"})
+db.employee.insert({_id:002,name:"Eren Patil",email:"eren@gmail.com",mobile:7189767890,address:"Eldia"})
+db.employee.insert({_id:003,name:"Annie Patil",email:"annie@gmail.com",mobile:8346702190,address:"Survey Corps"})
+db.employee.insert({_id:007,name:"Mikasa Patil",email:"mikasa@gmail.com",mobile:4738348749,address:"Ackerman"})
+db.employee.find();
+db.employee.find().count();
+db.employee.find().skip(2).limit(1);
+db.employee.findOne();
+db.employee.update({_id:001},{$set:{email:'Patil@gmail.com'}})
+db.employee.find();
+db.employee.remove({_id:001})
+db.employee.find();
+
+
+=======================================================================================================================================================================
+
+Logical Query Operator- MongoDB
+
+1. $and
+It is used to join query clauses with a logical AND and return all documents that match the given conditions of
+both clauses.
+Example:
+Query:
+db.contributor.find({$and: [{branch: "CSE"}, {joiningYear: 2018}]}).pretty()
+
+
+2. $or
+It is used to join query clauses with a logical OR and return all documents that match the given conditions of
+either clause.
+Example:
+Query:
+db.contributor.find({$or: [{branch: "ECE"}, {joiningYear: 2017}]}).pretty()
+
+
+3. $not
+It is used to invert the effect of the query expressions and return documents that does not match the query
+expression
+Example:
+Query:
+db.contributor.find({salary: {$not: {$gt: 2000}}}).pretty()
+
+
+4. $nor
+It is used to join query clauses with a logical NOR and return all documents that fail to match both clauses.
+Example:
+Query:
+db.contributor.find({$nor: [{salary: 3000}, {branch: "ECE"}]}).pretty()

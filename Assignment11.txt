@@ -1,0 +1,357 @@
+
+db.createCollection("employee")
+db.employee.insert({_id:001,name:"Shreyas Patil",email:"shreyas@gmail.com",mobile:1234567890,address:"Pune"})
+db.employee.insert({_id:002,name:"Eren Patil",email:"eren@gmail.com", experience:true,mobile:7189767890,address:"Eldia"})
+db.employee.insert({_id:003,name:"Annie Patil",email:"annie@gmail.com",mobile:8346702190,address:"Survey Corps"})
+db.employee.insert({_id:007,name:"Mikasa Patil",email:"mikasa@gmail.com",experience:true,mobile:4738348749,address:"Ackerman"})
+db.employee.find();
+db.employee.aggregate([{$match:{experience:true}},{$group:{_id:"$_id"}},{$sort:{_id:1}}])
+db.employee.aggregate([{$match:{experience:true}},{$count:"Count having experience true:"}])
+db.employee.createIndex({name:001})
+db.employee.getIndexes()
+
+===================================================================================================================================================================
+
+
+
+//from manual
+
+Program for aggregation:
+test> use customer
+switched to db customer
+customer> db.createCollection('Customer');
+{ ok: 1 }
+customer> db.Customer.insertOne({'CustID':'A123', 'Amount':500,
+'Status':'completed'})
+{
+acknowledged: true,
+insertedId: ObjectId("635a9a5d29e81711afa59d0b")
+}
+customer> db.Customer.insertOne({'CustID':'A124', 'Amount':200,
+'Status':'completed'})
+{
+acknowledged: true,
+insertedId: ObjectId("635a9a7c29e81711afa59d0c")
+}
+customer> db.Customer.insertOne({'CustID':'A150', 'Amount':250,
+'Status':'pending'})
+{
+acknowledged: true,
+insertedId: ObjectId("635a9a9a29e81711afa59d0d")
+}
+customer> db.Customer.insertOne({'CustID':'A150', 'Amount':300,
+'Status':'pending'})
+{
+acknowledged: true,
+insertedId: ObjectId("635a9aa629e81711afa59d0e")
+}
+customer> db.Customer.insertOne({'CustID':'A201', 'Amount':750,
+'Status':'pending'})
+{
+acknowledged: true,
+insertedId: ObjectId("635a9aef29e81711afa59d0f")
+}
+customer> db.Customer.find().pretty()
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a9a29e81711afa59d0d"),
+CustID: 'A150',
+Amount: 250,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aa629e81711afa59d0e"),
+CustID: 'A150',
+Amount: 300,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aef29e81711afa59d0f"),
+CustID: 'A201',
+Amount: 750,
+Status: 'pending'
+}
+]
+customer>
+1. Find the customer whose status is "completed"
+customer> db.Customer.aggregate([{$match:{'Status':'completed'}}])
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+}
+]
+2. Find the customer whose status is "completed" and whose amount is more
+than or equal to 250
+customer> db.Customer.aggregate([{$match:{'Status':'completed',
+'Amount':{$gte:250}}}])
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+}
+]
+3. In above query use match operator twice to acheive same result
+customer>
+db.Customer.aggregate([{$match:{'Status':'completed'}},{$match:{'Amount':
+{$gte:250}}}])
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+}
+]
+4. Find sum of amount of customer under status "completed"
+customer>
+db.Customer.aggregate([{$match:{'Status':'completed'}},{$group:{_id:'$Cus
+tID','totalAmount':{$sum:'$Amount'}}}])
+[
+{ _id: 'A123', totalAmount: 500 },
+{ _id: 'A124', totalAmount: 200 }
+]
+5. Find the minimum amount of customer under status "pending"
+customer>
+db.Customer.aggregate([{$match:{'Status':'pending'}},{$group:{_id:'$CustI
+D','minAmount':{$max:'$Amount'}}}])
+[ { _id: 'A150', minAmount: 300 }, { _id: 'A201', minAmount: 750 } ]
+6. Find the maximum amount of customer under status "pending"
+customer>
+db.Customer.aggregate([{$match:{'Status':'pending'}},{$group:{_id:'$CustI
+D','maxAmount':{$max:'$Amount'}}}]).pretty()
+[ { _id: 'A150', maxAmount: 300 }, { _id: 'A201', maxAmount: 750 } ]
+7. Find the average amount of customer under status "pending"
+customer>
+db.Customer.aggregate([{$match:{'Status':'pending'}},{$group:{_id:'$CustI
+D','avgAmount':{$avg:'$Amount'}}}]).pretty()
+[ { _id: 'A150', avgAmount: 275 }, { _id: 'A201', avgAmount: 750 } ]
+8. Sort the customer according to CustID in ascending order
+customer> db.Customer.aggregate([{$sort:{'CustID':1}}]).pretty()
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a9a29e81711afa59d0d"),
+CustID: 'A150',
+Amount: 250,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aa629e81711afa59d0e"),
+CustID: 'A150',
+Amount: 300,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aef29e81711afa59d0f"),
+CustID: 'A201',
+Amount: 750,
+Status: 'pending'
+}
+]
+9.Sort the customer according to CustID in descending order
+customer> db.Customer.aggregate([{$sort:{'CustID':-1}}]).pretty()
+[
+{
+_id: ObjectId("635a9aef29e81711afa59d0f"),
+CustID: 'A201',
+Amount: 750,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9a9a29e81711afa59d0d"),
+CustID: 'A150',
+Amount: 250,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aa629e81711afa59d0e"),
+CustID: 'A150',
+Amount: 300,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+}
+]
+10. using skip operator find total amount of customer
+customer> db.Customer.aggregate([{$skip:1},{$group:{_id:'$CustID',
+'totalAmount':{$sum:'$Amount'}}}])
+[
+{ _id: 'A124', totalAmount: 200 },
+{ _id: 'A150', totalAmount: 550 },
+{ _id: 'A201', totalAmount: 750 }
+]
+11. using limit operator find total amount of customer
+customer> db.Customer.aggregate([{$limit:2},{$group:{_id:'$CustID',
+'totalAmount':{$sum:'$Amount'}}}])
+[
+{ _id: 'A123', totalAmount: 500 },
+{ _id: 'A124', totalAmount: 200 }
+]
+12. using limit operator find first amount of customer
+customer> db.Customer.aggregate([{$limit:4},{$group:{_id:'$CustID',
+'totalAmount':{$first:'$Amount'}}}])
+[
+{ _id: 'A123', totalAmount: 500 },
+{ _id: 'A124', totalAmount: 200 },
+{ _id: 'A150', totalAmount: 250 }
+]
+13. using limit operator find last amount of customer
+customer> db.Customer.aggregate([{$limit:4},{$group:{_id:'$CustID',
+'totalAmount':{$last:'$Amount'}}}])
+[
+{ _id: 'A123', totalAmount: 500 },
+{ _id: 'A124', totalAmount: 200 },
+{ _id: 'A150', totalAmount: 300 }
+
+
+]
+MongoDB – Indexing
+Indexes support the efficient resolution of queries. Without indexes, MongoDB must scan every document of a
+collection to select those documents that match the query statement. This scan is highly inefficient and require
+MongoDB to process a large volume of data.
+Indexes are special data structures, that store a small portion of the data set in an easy-to-traverse form. The index
+stores the value of a specific field or set of fields, ordered by the value of the field as specified in the index.
+1. Ensure Index
+customer> db.Customer.ensureIndex({'CustID':1})
+[ 'CustID_1' ]
+
+2.Find Indexes
+customer> db.Customer.getIndexes()
+[
+{ v: 2, key: { _id: 1 }, name: '_id_' },
+{ v: 2, key: { CustID: 1 }, name: 'CustID_1' }
+]
+3. Create Index
+customer> db.Customer.createIndex({'Amount':-1})
+Amount_-1
+customer> db.Customer.getIndexes()
+[
+{ v: 2, key: { _id: 1 }, name: '_id_' },
+{ v: 2, key: { CustID: 1 }, name: 'CustID_1' },
+{ v: 2, key: { Amount: -1 }, name: 'Amount_-1' }
+]
+4. Drop Index
+customer> db.Customer.dropIndex({'Amount':-1})
+{ nIndexesWas: 3, ok: 1 }
+customer> db.Customer.getIndexes()
+[
+{ v: 2, key: { _id: 1 }, name: '_id_' },
+{ v: 2, key: { CustID: 1 }, name: 'CustID_1' }
+]
+5. sort indexes
+a. Descending
+customer> db.Customer.find().sort({'CustID':-1})
+[
+{
+_id: ObjectId("635a9aef29e81711afa59d0f"),
+CustID: 'A201',
+Amount: 750,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aa629e81711afa59d0e"),
+CustID: 'A150',
+Amount: 300,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9a9a29e81711afa59d0d"),
+CustID: 'A150',
+Amount: 250,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+}
+]
+b. Ascending
+customer> db.Customer.find().sort({'CustID':1})
+[
+{
+_id: ObjectId("635a9a5d29e81711afa59d0b"),
+CustID: 'A123',
+Amount: 500,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a7c29e81711afa59d0c"),
+CustID: 'A124',
+Amount: 200,
+Status: 'completed'
+},
+{
+_id: ObjectId("635a9a9a29e81711afa59d0d"),
+CustID: 'A150',
+Amount: 250,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aa629e81711afa59d0e"),
+CustID: 'A150',
+Amount: 300,
+Status: 'pending'
+},
+{
+_id: ObjectId("635a9aef29e81711afa59d0f"),
+CustID: 'A201',
+Amount: 750,
+Status: 'pending'
+}
+]
+
+Note:
+createIndex() used to create indexes on collections whereas ensureIndex() creates an index on the specified field if
+the index does not already exist. Moreover when we execute createIndex() twice 

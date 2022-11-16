@@ -1,0 +1,151 @@
+Named PL/SQL
+
+
+create table stud_marks(roll_no number(3), name varchar2(20), marks number(5));
+create table result(roll_no number(3), name varchar2(20), class varchar(20));
+
+SQL> create procedure Proc_Grade2(roll_no number, name varchar2, marks number)
+     as
+     class varchar2(20);
+     begin
+         if(marks<=1500 and marks>=990) then
+         class:='Distinction';
+         elseif(marks<=989 and marks>=900) then
+         class:='First Class';
+         elseif(marks<=899 and marks>=825) then
+         class:='Higher Second Class';
+         else
+         class:='Pass';
+         end if;
+         insert into stud_marks values(roll_no, name, marks);
+         insert into result values(roll_no,name, class);
+     end;
+     /
+
+
+execute Proc_Grade2(007,'Eren', 1400);
+execute Proc_Grade2(008,'Mikasa', 980);
+execute Proc_Grade2(009,'Levi', 870);
+execute Proc_Grade2(010,'Erwin',1200);
+
+select * stud_marks;
+select * from result;
+
+===============================================================================================================================================================
+
+//from manual
+MariaDB [stud]> create table stud_marks(rollno int(2),name varchar(12),total_marks int(12));
+Query OK, 0 rows affected (0.06 sec)
+MariaDB [stud]> insert into stud_marks
+values(1,"Ravi",933),(2,"sagar",450),(3,"sarita",1300),(4,"avi",250),(5,"raj",675);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5 Duplicates: 0 Warnings: 0
+MariaDB [stud]> select * from stud_marks;
++--------+--------+-------------+
+| rollno | name | total_marks |
++--------+--------+-------------+
+| 1 | Ravi | 933 |
+| 2 | sagar | 450 |
+| 3 | sarita | 1300 |
+| 4 | avi | 250 |
+| 5 | raj | 675 |
++--------+--------+-------------+
+5 rows in set (0.00 sec)
+MariaDB [stud]> create table new_stud_marks(roll_no int(2),name char(10),grade char(10));
+Query OK, 0 rows affected (0.04 sec)
+create procedure proc_grade1()
+begin
+declare i int;
+declare n int;
+declare rollno1 int;
+declare name1 varchar(20);
+declare class1 varchar(40);
+declare total1 int;
+declare s1 int;
+declare s2 int;
+declare s3 int;
+declare s4 int;
+declare s5 int;
+select count(*)into n from marks;
+set i=0;
+disp:loop
+set i=i+1;
+select rollno into rollno1 from marks where rollno=i;
+select name into name1 from marks where rollno=i;
+select sub1 into s1 from marks where rollno=i;
+select sub2 into s2 from marks where rollno=i;
+select sub3 into s3 from marks where rollno=i;
+select sub4 into s4 from marks where rollno=i;
+select sub5 into s5 from marks where rollno=i;
+set total1=s1+s2+s3+s4+s5;
+if total1<=1500 and total1>990 then
+set class1='distinction';
+else
+if total1<=989 and total1>900 then
+Database Management Systems Laboratory Class:TE(ComputerEngineering)
+Departmentof ComputerEngineering,ZCOER,Narhe,Pune-41 Page52
+set class1='first class';
+else
+if total1<899 and total1>825 then
+set class1='higher class';
+else
+set class1='pass class';
+end if;
+end if;
+end if;
+insert into stud_marks values(rollno1,name1,total1);
+insert into results values(rollno1,name1,class1);
+if i=n then
+leave disp;
+end if;
+end loop;
+end
+//
+mysql> create table stud_marks(rolllno int,name varchar(90),class varchar(90));
+Query OK, 0 rows affected (0.29 sec)
+mysql> create table results(rollno int,name varchar(90),class varchar
+ -> (90));
+Query OK, 0 rows affected (0.27 sec)
+mysql> alter table stud_marks drop class;
+Query OK, 0 rows affected (0.28 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> alter table stud_marks add total int;
+Query OK, 0 rows affected (0.26 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+create table marks(rollno int,name varchar(99),sub1 int,sub2 int,sub3 int,sub4 int,sub5 int);
+Query OK, 0 rows affected (0.34 sec)
+mysql> insert into marks values(1,'komal',254,123,345,234,444);
+Query OK, 1 row affected (0.06 sec)
+mysql> select * from marks;
++--------+--------+------+------+------+------+------+
+| rollno | name | sub1 | sub2 | sub3 | sub4 | sub5 |
++--------+--------+------+------+------+------+------+
+| 1 | komal | 254 | 123 | 345 | 234 | 444 |
+| 2 | shital | 154 | 223 | 325 | 134 | 144 |
+| 3 | raj | 154 | 523 | 245 | 244 | 414 |
++--------+--------+------+------+------+------+------+
+3 rows in set (0.01 sec)
+Database Management Systems Laboratory Class:TE(ComputerEngineering)
+Departmentof ComputerEngineering,ZCOER,Narhe,Pune-41 Page53
+////////////////////////output////////////////////////////////////////
+mysql> delimiter ;
+mysql> call proc_grades();
+Query OK, 1 row affected (0.97 sec)
+mysql> select * from stud_marks;
++---------+--------+-------+
+| rolllno | name | total |
++---------+--------+-------+
+| 1 | komal | NULL |
+| 2 | shital | NULL |
+| 3 | raj | NULL |
++---------+--------+-------+
+3 rows in set (0.00 sec)
+mysql> select * from results;
++--------+--------+------------+
+| rollno | name | class |
++--------+--------+------------+
+| 1 | komal | pass class |
+| 2 | shital | pass class |
+| 3 | raj | pass class |
++--------+--------+------------+
+3 rows in set (0.00 sec)

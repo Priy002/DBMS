@@ -1,0 +1,164 @@
+Trigger
+
+A PL/SQL trigger is a named database object that encapsulates and defines a set of actions that are to be performed
+in response to an insert, update, or delete operation against a table. Triggers are created using the PL/SQL CREATE
+TRIGGER statement.
+
+Types of triggers (PL/SQL)
+The data server supports row-level and statement-level triggers within a PL/SQL context.
+• A row-level trigger fires once for each row that is affected by a triggering event. For example, if deletion is
+defined as a triggering event for a particular table, and a single DELETE statement deletes five rows from that
+table, the trigger fires five times, once for each row.
+• A statement-level trigger fires only once for each statement. Using the previous example, if deletion is defined
+• as a triggering event for a particular table, and a single DELETE statement deletes five rows from that table, the
+trigger fires once. Statement-level trigger granularity cannot be specified for BEFORE triggers or INSTEAD OF
+triggers.
+
+1 create trigger tr_ins_borrower     
+2 before insert 
+3 on borrower
+4 for each row
+5 begin
+6 insert into issued values (new.Roll No, new. Name, new. Name_of_Book);
+7 end
+8 //
+9
+10
+11
+12 create trigger tr_del_borrower
+13 after delete
+14 on borrower
+15 for each row
+16 begin 17 delete from issued where Roll_No-old. Roll_No;
+18 end
+19 //
+20
+21
+22
+23 create trigger tr_up_borrower
+24 after update
+25 on borrower
+26 for each row
+27 begin
+28 update issued set Roll_No=new.Roll_No where Roll_No=old. Roll_No;
+29 end
+30 //
+
+//First create two tables
+
+
+program
+delimiter //
+create trigger tr_ins_Borrower
+before insert
+on borrower
+for each row
+begin
+insert into issued values(new.rollno,new.name,new.nameofbook);
+end
+//
+////////////////////////output///////////////////////////////////
+mysql> insert into borrowe values(1,'gg','ggh');
+ -> //
+Query OK, 1 row affected (0.06 sec)
+mysql> select * from table2;
+ -> //
++--------+------+------------+
+| rollno | name | nameofbook |
++--------+------+------------+
+| 1 | gg | ggh |
++--------+------+------------+
+1 row in set (0.00 sec)
+///////////////////////////////////////////////////
+delimiter //
+create trigger tr_del_Borrower
+before delete
+on table1
+for each row
+begin
+delete from table2 where rollno=old.rollno;
+end
+//
+///////////////////output/////////////////////////////
+mysql> delete from table1 where rollno=1;
+ -> //
+Query OK, 1 row affected (0.07 sec)
+mysql> select * from table2;
+ -> //
+Database Management System Laboratory Class: TE(ComputerEngineering)
+Department of ComputerEngineering,ZCOER,Narhe,Pune-41 Page63
++--------+-------+------------+
+| rollno | name | nameofbook |
++--------+-------+------------+
+| 2 | komal | oop |
++--------+-------+------------+
+1 row in set (0.00 sec)
+///////////////////////////////////////////////
+delimiter //
+create trigger tr_up1_Borrower
+before update
+on table1
+for each row
+begin
+update table2 set rollno=new.rollno where rollno=old.rollno;
+end
+//
+//////////////////output////////////////////
+mysql> update table1 set rollno=4 where rollno=2;
+ -> //
+Query OK, 1 row affected (0.10 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> select * from table2;
+ -> //
++--------+-------+------------+
+| rollno | name | nameofbook |
++--------+-------+------------+
+| 4 | komal | oop |
++--------+-------+------------+
+1 row in set (0.00 sec)
+Conclusion: Performed impl
+
+
+
+
+
+
+
+=================================================================================================================================================================
+
+CREATE TABLE lib_tab(book_name VARCHAR2(25),status VARCHAR2(15));
+CREATE TABLE library_audit(date_modified DATE, book_name VARCHAR2(25),old_status VARCHAR(15),new_status VARCHAR2(15),action VARCHAR2(25));
+CREATE OR REPLACE TRIGGER trigger_1 
+AFTER UPDATE OR DELETE OR INSERT ON lib_tab FOR EACH ROW
+ENABLE
+	   BEGIN
+		     IF UPDATING THEN
+			        dbms_output.put_line(:OLD.status);
+			        INSERT INTO library_audit VALUES (SYSDATE,:OLD.book_name,:OLD.status,:NEW.status,'UPDATE');
+                ELSIF INSERTING THEN
+                         dbms_output.put_line(:NEW.status);
+                         INSERT INTO library_audit VALUES (SYSDATE,:NEW.book_name,:OLD.status,:NEW.status,'INSERT');
+		     ELSE
+			         dbms_output.put_line(:OLD.book_name||'deleting');
+			         INSERT INTO library_audit VALUES(SYSDATE,:OLD.book_name,:OLD.status,:NEW.status,'DELETE');
+		     END IF;
+	   END;
+/
+DELETE FROM lib_tab WHERE book_name = 'SILENT HILL';
+UPDATE lib_tab SET status = 'UNAVAILABLE' WHERE book_name =  'UNCHARTED';
+UPDATE lib_tab SET status = 'PRE-ORDER' WHERE book_name = 'GOD OF WAR';
+UPDATE lib_tab SET status = 'AVAILABLE' WHERE book_name = 'UNCHARTED';
+INSERT INTO lib_tab VALUES('SPM','UNAVAILABLE');
+Select * from library_audit;
+Select * from lib_tab;
+INSERT INTO lib_tab VALUES('DARK MATTER','AVAILABLE');
+INSERT INTO lib_tab VALUES('SILENT HILL','UNAVAILABLE');
+INSERT INTO lib_tab VALUES('GOD OF WAR','AVAILABLE');
+INSERT INTO lib_tab VALUES('SPIDER-MAN','UNAVAILABLE');
+INSERT INTO lib_tab VALUES('UNCHARTED','AVAILABLE');
+DELETE FROM lib_tab WHERE book_name = 'SILENT HILL';
+UPDATE lib_tab SET status = 'UNAVAILABLE' WHERE book_name =  'UNCHARTED';
+UPDATE lib_tab SET status = 'PRE-ORDER' WHERE book_name = 'GOD OF WAR';
+SELECT * from library_audit;
+
+

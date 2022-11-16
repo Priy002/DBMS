@@ -1,0 +1,25 @@
+Assignment 05(radius and area) 
+
+1.	create database assignment_5_radius;
+2.	mysql> create table area(r numeric,area numeric);
+3.	mysql> use assignment_5_radius;
+4.	mysql> create table area(r numeric,area numeric);
+5.	mysql> delimiter //
+6.	mysql> create procedure A()
+        ->	begin
+	->      declare r numeric;
+	->      declare area numeric;
+	->      declare pi numeric;
+	->      set pi=3.14;
+	->      set r=5;
+	->      while r<=9 do
+	->      set area=pi*r*r;
+	->      insert into area values(r,area);
+	->      set r=r+1;
+	->      end
+	->      while ;
+	->      end
+	->      //
+7.	mysql> delimiter ;
+8.	mysql> call A();
+9.	mysql> select * from area;
